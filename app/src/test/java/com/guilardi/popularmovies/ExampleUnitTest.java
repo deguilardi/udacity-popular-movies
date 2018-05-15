@@ -1,4 +1,4 @@
-package com.guilardi.popularmovies.popularmovies;
+package com.guilardi.popularmovies;
 
 import org.junit.Test;
 
