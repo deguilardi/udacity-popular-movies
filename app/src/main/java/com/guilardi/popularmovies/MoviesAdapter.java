@@ -14,6 +14,10 @@ import com.guilardi.popularmovies.data.Movie;
 import com.guilardi.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URL;
 
 import butterknife.BindView;
@@ -26,8 +30,22 @@ import butterknife.ButterKnife;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapterViewHolder>{
 
     Activity mContext;
-    private Cursor mCursor;
+    private JSONArray mData;
     final private MovieAdapterOnClickHandler mClickHandler; // @TODO
+
+    private static final String J_RESULTS_VOTE_COUNT = "vote_count";
+    private static final String J_RESULTS_ID = "id";
+    private static final String J_RESULTS_VIDEO = "video";
+    private static final String J_RESULTS_VOTE_AVARAGE = "vote_average";
+    private static final String J_RESULTS_TITLE = "title";
+    private static final String J_RESULTS_POPULARITY = "popularity";
+    private static final String J_RESULTS_POSTER_PATH = "poster_path";
+    private static final String J_RESULTS_ORIGINAL_LANGUAGE = "original_language";
+    private static final String J_RESULTS_ORIGINAL_TITLE = "original_title";
+    private static final String J_RESULTS_BACKDROP_PATH = "backdrop_path";
+    private static final String J_RESULTS_ADULT = "adult";
+    private static final String J_RESULTS_OVERVIEW = "overview";
+    private static final String J_RESULTS_RELEASE_DATE = "release_date";
 
     public interface MovieAdapterOnClickHandler {
         void onClick(long date);
@@ -48,30 +66,35 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
     @Override
     public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
 
-        // define the image size
+        // define the image size based on device size
         DisplayMetrics displayMetrics = new DisplayMetrics();
         mContext.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int screenWidth = displayMetrics.widthPixels;
         int sizeW = (int) (screenWidth / 2);
         int sizeH = (int) (sizeW * 1.63);
 
-        mCursor.moveToPosition(position);
-        String posterPath = mCursor.getString(mCursor.getColumnIndex(Movie.MovieEntry.COLUMN_POSTER_PATH));
-        URL thumbURL = NetworkUtils.getThumbURL(posterPath, mContext);
-        Picasso.with(mContext).load(thumbURL.toString())
-                .resize(sizeW, sizeH)
-                .centerCrop()
-                .into(movieAdapterViewHolder.thumbView);
+        // parse te result
+        try {
+            JSONObject movieJson = mData.getJSONObject(position);
+            String posterPath = movieJson.getString(J_RESULTS_POSTER_PATH);
+            URL thumbURL = NetworkUtils.getThumbURL(posterPath, mContext);
+            Picasso.with(mContext).load(thumbURL.toString())
+                    .resize(sizeW, sizeH)
+                    .centerCrop()
+                    .into(movieAdapterViewHolder.thumbView);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public int getItemCount() {
-        if (mCursor == null) return 0;
-        return mCursor.getCount();
+        if (mData == null) return 0;
+        return mData.length();
     }
 
-    public void swapCursor(Cursor cursor) {
-        mCursor = cursor;
+    public void swapData(JSONArray data) {
+        mData = data;
         notifyDataSetChanged();
     }
 

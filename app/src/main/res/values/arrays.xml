@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="pref_show_by_entries">
+        <item>@string/pref_show_by_popularity</item>
+        <item>@string/pref_show_by_rating</item>
+    </array>
+    <array name="pref_show_by_values">
+        <item>movie/popular</item>
+        <item>movie/top_rated</item>
+    </array>
+</resources>

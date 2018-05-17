@@ -41,8 +41,8 @@ public final class NetworkUtils {
         public static final String PATH_SIZE_THUMB_780 = "/p/w780";
     }
 
-    public static URL getMoviesListURL(){
-        return getURL(NetworkUtils.C_MOVIE.SERVER_URL, NetworkUtils.C_MOVIE.PATH_MOVIES_TOP_RATED);
+    public static URL getMoviesListURLWithType(String type){
+        return getURL(NetworkUtils.C_MOVIE.SERVER_URL, type);
     }
 
     public static URL getThumbURL(String posterPath, Activity context){

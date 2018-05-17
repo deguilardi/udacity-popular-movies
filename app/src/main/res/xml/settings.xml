@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="@string/pref_show_by_key"
+        android:title="@string/pref_show_by"
+        android:dialogTitle="@string/pref_show_by"
+        android:entries="@array/pref_show_by_entries"
+        android:entryValues="@array/pref_show_by_values"
+        android:defaultValue="@string/pref_show_by_default" />
+</PreferenceScreen>
