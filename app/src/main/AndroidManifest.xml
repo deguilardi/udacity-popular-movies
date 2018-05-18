@@ -34,6 +34,15 @@
                 android:value=".MainActivity" />
         </activity>
 
+        <activity
+            android:name=".DetailActivity"
+            android:label="@string/title_detail"
+            android:parentActivityName=".MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+
         <provider
             android:name=".data.MoviesProvider"
             android:authorities="@string/content_authority"

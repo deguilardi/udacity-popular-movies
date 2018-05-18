@@ -36,12 +36,6 @@ public class DbHelper extends SQLiteOpenHelper {
                         Movie.MovieEntry.COLUMN_RELEASE_DATE      + " TEXT NOT NULL, " +
                         " UNIQUE (" + Movie.MovieEntry.COLUMN_ID + ") ON CONFLICT REPLACE);";
         db.execSQL(SQL_CREATE_MOVIES_TABLE);
-
-        final String SQL_CREATE_GENRES_TABLE =
-                "CREATE TABLE " + Movie.GenreEntry.TABLE_NAME + " (" +
-                        Movie.GenreEntry.COLUMN_ID + " INTEGER NOT NULL PRIMARY KEY, " +
-                        " UNIQUE (" + Movie.GenreEntry.COLUMN_ID + ") ON CONFLICT REPLACE);";
-        db.execSQL(SQL_CREATE_GENRES_TABLE);
     }
 
     @Override

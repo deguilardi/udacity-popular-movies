@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+import com.guilardi.popularmovies.BuildConfig;
 import com.guilardi.popularmovies.Config;
 
 import java.io.IOException;
@@ -48,6 +49,7 @@ public final class NetworkUtils {
     public static URL getThumbURL(String posterPath, Activity context){
 
         // define the size based on the screen width
+        // this will make sure the downloaded image is the best fit
         String size;
         DisplayMetrics displayMetrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
@@ -79,13 +81,13 @@ public final class NetworkUtils {
     }
 
     private static URL buildUrlWithServerAndPath(String serverUrl, String path) {
-        if(Config.MOVIE_DB_API_KEY.equals("") || Config.MOVIE_DB_API_KEY.equals("YOUR_API_KEY")){
+        if(BuildConfig.MOVIE_DB_API_KEY.equals("") || BuildConfig.MOVIE_DB_API_KEY.equals("YOUR_API_KEY")){
             throw new RuntimeException("Config.MOVIE_DB_API_KEY must be defined");
         }
 
         Uri queryUri = Uri.parse(serverUrl).buildUpon()
                 .appendEncodedPath(path)
-                .appendQueryParameter(PARAM_API_KEY, Config.MOVIE_DB_API_KEY)
+                .appendQueryParameter(PARAM_API_KEY, BuildConfig.MOVIE_DB_API_KEY)
                 .build();
         try {
             URL queryUrl = new URL(queryUri.toString());

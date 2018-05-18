@@ -1,3 +1,8 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="title_text">48sp</dimen>
+    <dimen name="title_size">160dp</dimen>
+    <dimen name="title_padding_horizontal">22dp</dimen>
+    <dimen name="title_padding_vertical">30dp</dimen>
+    <dimen name="detail_thumb_marging_horizontal">35dp</dimen>
 </resources>

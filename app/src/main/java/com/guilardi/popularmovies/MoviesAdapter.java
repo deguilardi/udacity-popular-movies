@@ -1,7 +1,6 @@
 package com.guilardi.popularmovies;
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -11,12 +10,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.guilardi.popularmovies.data.Movie;
+import com.guilardi.popularmovies.data.Movies;
 import com.guilardi.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.URL;
 
@@ -29,26 +25,14 @@ import butterknife.ButterKnife;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapterViewHolder>{
 
-    Activity mContext;
-    private JSONArray mData;
-    final private MovieAdapterOnClickHandler mClickHandler; // @TODO
+    private static final String TAG = MoviesAdapter.class.getSimpleName();
 
-    private static final String J_RESULTS_VOTE_COUNT = "vote_count";
-    private static final String J_RESULTS_ID = "id";
-    private static final String J_RESULTS_VIDEO = "video";
-    private static final String J_RESULTS_VOTE_AVARAGE = "vote_average";
-    private static final String J_RESULTS_TITLE = "title";
-    private static final String J_RESULTS_POPULARITY = "popularity";
-    private static final String J_RESULTS_POSTER_PATH = "poster_path";
-    private static final String J_RESULTS_ORIGINAL_LANGUAGE = "original_language";
-    private static final String J_RESULTS_ORIGINAL_TITLE = "original_title";
-    private static final String J_RESULTS_BACKDROP_PATH = "backdrop_path";
-    private static final String J_RESULTS_ADULT = "adult";
-    private static final String J_RESULTS_OVERVIEW = "overview";
-    private static final String J_RESULTS_RELEASE_DATE = "release_date";
+    Activity mContext;
+    private Movies mData;
+    final private MovieAdapterOnClickHandler mClickHandler;
 
     public interface MovieAdapterOnClickHandler {
-        void onClick(long date);
+        void onClick(int position);
     }
 
     public MoviesAdapter(@NonNull Activity context, MovieAdapterOnClickHandler clickHandler) {
@@ -74,17 +58,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
         int sizeH = (int) (sizeW * 1.63);
 
         // parse te result
-        try {
-            JSONObject movieJson = mData.getJSONObject(position);
-            String posterPath = movieJson.getString(J_RESULTS_POSTER_PATH);
-            URL thumbURL = NetworkUtils.getThumbURL(posterPath, mContext);
-            Picasso.with(mContext).load(thumbURL.toString())
-                    .resize(sizeW, sizeH)
-                    .centerCrop()
-                    .into(movieAdapterViewHolder.thumbView);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        Movie movie = mData.getMovieAtPosition(position);
+        String posterPath = movie.getPosterPath();
+        URL thumbURL = NetworkUtils.getThumbURL(posterPath, mContext);
+        Picasso.with(mContext).load(thumbURL.toString())
+                .resize(sizeW, sizeH)
+                .centerCrop()
+                .into(movieAdapterViewHolder.thumbView);
     }
 
     @Override
@@ -93,7 +73,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
         return mData.length();
     }
 
-    public void swapData(JSONArray data) {
+    public void swapData(Movies data) {
         mData = data;
         notifyDataSetChanged();
     }
@@ -104,10 +84,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
         MovieAdapterViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+            view.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
+            int position = getAdapterPosition();
+            mClickHandler.onClick(position);
         }
     }
 }

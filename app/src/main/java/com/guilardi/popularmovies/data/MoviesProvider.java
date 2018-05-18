@@ -17,8 +17,6 @@ public class MoviesProvider extends ContentProvider{
 
     public static final int CODE_MOVIES = 100;
     public static final int CODE_MOVIE = 101;
-    public static final int CODE_GENRES = 200;
-    public static final int CODE_GENRE = 201;
 
     private static final UriMatcher mUriMatcher = buildUriMatcher();
     private DbHelper mDbHelper;
@@ -30,9 +28,6 @@ public class MoviesProvider extends ContentProvider{
 
         matcher.addURI(authority, Movie.PATH_MOVIES, CODE_MOVIES);
         matcher.addURI(authority, Movie.PATH_MOVIES + "/#", CODE_MOVIE);
-
-        matcher.addURI(authority, Movie.PATH_GENRES, CODE_GENRES);
-        matcher.addURI(authority, Movie.PATH_GENRES + "/#", CODE_GENRE);
 
         return matcher;
     }
@@ -50,8 +45,7 @@ public class MoviesProvider extends ContentProvider{
 
         switch (mUriMatcher.match(uri)) {
             case CODE_MOVIES:
-            case CODE_GENRES:
-                final String tableName = (mUriMatcher.match(uri) == CODE_MOVIES) ? Movie.MovieEntry.TABLE_NAME : Movie.GenreEntry.TABLE_NAME;
+                final String tableName = Movie.MovieEntry.TABLE_NAME;
                 db.beginTransaction();
                 try {
                     for (ContentValues value : values) {
@@ -95,18 +89,6 @@ public class MoviesProvider extends ContentProvider{
                 );
                 break;
             }
-            case CODE_GENRES:{
-                cursor = mDbHelper.getReadableDatabase().query(
-                        Movie.GenreEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder
-                );
-                break;
-            }
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -133,13 +115,6 @@ public class MoviesProvider extends ContentProvider{
             case CODE_MOVIES:
                 numRowsDeleted = mDbHelper.getWritableDatabase().delete(
                         Movie.MovieEntry.TABLE_NAME,
-                        selection,
-                        selectionArgs);
-                break;
-
-            case CODE_GENRES:
-                numRowsDeleted = mDbHelper.getWritableDatabase().delete(
-                        Movie.GenreEntry.TABLE_NAME,
                         selection,
                         selectionArgs);
                 break;

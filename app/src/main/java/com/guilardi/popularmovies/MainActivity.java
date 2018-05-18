@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
 
+import com.guilardi.popularmovies.data.Movies;
 import com.guilardi.popularmovies.utilities.NetworkUtils;
 
 import org.json.JSONArray;
@@ -31,7 +32,7 @@ public class MainActivity
         extends AppCompatActivity
         implements MoviesAdapter.MovieAdapterOnClickHandler, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final String TAG = NetworkUtils.class.getSimpleName();
+    private static final String TAG = MainActivity.class.getSimpleName();
 
     private MoviesAdapter mMoviesAdapter;
     private int mPosition = RecyclerView.NO_POSITION;
@@ -44,8 +45,6 @@ public class MainActivity
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // define views
         setContentView(R.layout.activity_main);
 
         // extra binds
@@ -77,6 +76,11 @@ public class MainActivity
         return true;
     }
 
+    /**
+     * Responds to main menu selections
+     *
+     * @param item The item selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -91,16 +95,24 @@ public class MainActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Responds to clicks from the list.
+     *
+     * @param position The position of the selected item
+     */
     @Override
-    public void onClick(long date) {
-
+    public void onClick(int position) {
+        Intent detailsActivityIntent = new Intent(MainActivity.this, DetailActivity.class);
+        detailsActivityIntent.putExtra("position", position);
+        startActivity(detailsActivityIntent);
     }
 
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
-    }
-
+    /**
+     * Called when any shared preference is changed
+     *
+     * @param sharedPreferences Changed SharedPreferences object
+     * @param key The key of the preference changed
+     */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if(key.equals(getString(R.string.pref_show_by_key))){
@@ -117,16 +129,25 @@ public class MainActivity
                 .unregisterOnSharedPreferenceChangeListener(this);
     }
 
+    /**
+     * Show the loading spinning image
+     */
     private void showLoading() {
         mRecyclerView.setVisibility(View.INVISIBLE);
         mLoadingIndicator.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Show the list content and hide the loading
+     */
     private void showMoviesDataView() {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * Start the shared preferences, loading its values
+     */
     private void setupSharedPreferences() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mShowBy = sharedPreferences.getString(getString(R.string.pref_show_by_key),
@@ -161,11 +182,14 @@ public class MainActivity
             if (response != null) {
                 try {
                     JSONObject responseJSON = new JSONObject(response);
-                    JSONArray data = responseJSON.getJSONArray(J_RESULTS);
-                    mMoviesAdapter.swapData(data);
+                    JSONArray dataArray = responseJSON.getJSONArray(J_RESULTS);
+                    Movies.initWithJSONArray(dataArray);
+                    mMoviesAdapter.swapData(Movies.getInstance());
                     if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
                     mRecyclerView.smoothScrollToPosition(mPosition);
-                    if (data.length() != 0) showMoviesDataView();
+                    if (Movies.length() != 0){
+                        showMoviesDataView();
+                    }
                 } catch (JSONException e){
                     Log.e(TAG, e.getMessage());
                 }
