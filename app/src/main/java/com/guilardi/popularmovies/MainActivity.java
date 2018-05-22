@@ -2,7 +2,6 @@ package com.guilardi.popularmovies;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -11,7 +10,6 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,14 +19,11 @@ import android.widget.Toast;
 import com.guilardi.popularmovies.data.Movies;
 import com.guilardi.popularmovies.utilities.NetworkUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.URL;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity
         extends AppCompatActivity
@@ -74,7 +69,27 @@ public class MainActivity
     }
 
     private void loadMoviesData(){
-        new MoviesSyncTask().execute(mShowBy);
+        Callback<Movies> callback = new Callback<Movies>(){
+
+            @Override
+            public void onResponse(Call<Movies> call, Response<Movies> response) {
+                Movies movies = response.body();
+                mMoviesAdapter.swapData(movies);
+                if (mPosition == RecyclerView.NO_POSITION){
+                    mPosition = 0;
+                }
+                mRecyclerView.smoothScrollToPosition(mPosition);
+                if (movies != null && movies.length() != 0) {
+                    showMoviesDataView();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Movies> call, Throwable t) {
+                Toast.makeText(getParent(), "Something went wrong, please check your internet connection and try again!", Toast.LENGTH_LONG).show();
+            }
+        };
+        NetworkUtils.getInstance().loadMovies(mShowBy, callback);
         showLoading();
     }
 
@@ -121,7 +136,7 @@ public class MainActivity
             );
 
         Intent detailsActivityIntent = new Intent(MainActivity.this, DetailActivity.class);
-        detailsActivityIntent.putExtra("position", position);
+        detailsActivityIntent.putExtra("movie", mMoviesAdapter.getData().getMovieAtPosition(position));
         startActivity(detailsActivityIntent, options.toBundle());
     }
 
@@ -172,47 +187,5 @@ public class MainActivity
                 getResources().getString(R.string.pref_show_by_default));
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
-    }
-
-    class MoviesSyncTask extends AsyncTask<String, Void, String> {
-        private static final String J_RESULTS = "results";
-
-        @Override
-        protected String doInBackground(String... params) {
-            if (params.length == 0) {
-                return null;
-            }
-
-            String listType = params[0];
-
-            try {
-                URL requestUrl = NetworkUtils.getMoviesListURLWithType(listType);
-                return NetworkUtils.getResponseFromHttpUrl(requestUrl);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            if (response != null) {
-                try {
-                    JSONObject responseJSON = new JSONObject(response);
-                    JSONArray dataArray = responseJSON.getJSONArray(J_RESULTS);
-                    Movies.initWithJSONArray(dataArray);
-                    mMoviesAdapter.swapData(Movies.getInstance());
-                    if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
-                    mRecyclerView.smoothScrollToPosition(mPosition);
-                    if (Movies.length() != 0){
-                        showMoviesDataView();
-                    }
-                } catch (JSONException e){
-                    Toast.makeText(getParent(), "Something went wrong, please check your internet connection and try again!", Toast.LENGTH_LONG).show();
-                    Log.e(TAG, e.getMessage());
-                }
-            }
-        }
     }
 }

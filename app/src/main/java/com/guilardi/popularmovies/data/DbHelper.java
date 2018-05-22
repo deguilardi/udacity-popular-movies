@@ -4,6 +4,8 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.guilardi.popularmovies.Config;
+
 /**
  * Created by deguilardi on 5/14/18.
  */
@@ -11,10 +13,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DbHelper extends SQLiteOpenHelper {
 
     public static final String DATABASE_NAME = "movies.db";
-    private static final int DATABASE_VERSION = 1;
 
     public DbHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, DATABASE_NAME, null, Config.DATABASE_VERSION);
     }
 
     @Override
@@ -34,6 +35,7 @@ public class DbHelper extends SQLiteOpenHelper {
                         Movie.MovieEntry.COLUMN_IS_ADULT          + " NUMERIC NOT NULL, " +
                         Movie.MovieEntry.COLUMN_OVERVIEW          + " TEXT NOT NULL, " +
                         Movie.MovieEntry.COLUMN_RELEASE_DATE      + " TEXT NOT NULL, " +
+                        Movie.MovieEntry.COLUMN_IS_FAVORITE       + " NUMERIC NOT NULL, " +
                         " UNIQUE (" + Movie.MovieEntry.COLUMN_ID + ") ON CONFLICT REPLACE);";
         db.execSQL(SQL_CREATE_MOVIES_TABLE);
     }

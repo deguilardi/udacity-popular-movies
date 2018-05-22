@@ -5,7 +5,7 @@
         <item>@string/pref_show_by_rating</item>
     </array>
     <array name="pref_show_by_values">
-        <item>movie/popular</item>
-        <item>movie/top_rated</item>
+        <item>popular</item>
+        <item>top_rated</item>
     </array>
 </resources>

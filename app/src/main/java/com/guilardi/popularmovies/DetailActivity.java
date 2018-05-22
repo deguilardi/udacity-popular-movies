@@ -10,7 +10,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.guilardi.popularmovies.data.Movie;
-import com.guilardi.popularmovies.data.Movies;
 import com.guilardi.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
 
@@ -25,13 +24,13 @@ import butterknife.ButterKnife;
 
 public class DetailActivity extends AppCompatActivity {
 
+    private static final String TAG = DetailActivity.class.getSimpleName();
+
     private Movie mMovie;
-    private int mPosition;
 
     @BindView(R.id.pb_loading_indicator) ProgressBar mLoadingIndicator;
     @BindView(R.id.thumb_view) ImageView mThumbView;
     @BindView(R.id.year) TextView mYear;
-    @BindView(R.id.duration) TextView mDuration;
     @BindView(R.id.vote_avarage) TextView mVoteAvarage;
     @BindView(R.id.overview) TextView mOverview;
     @BindView(R.id.toolbar) Toolbar mToolbar;
@@ -55,8 +54,7 @@ public class DetailActivity extends AppCompatActivity {
         // get the movieID
         Bundle b = getIntent().getExtras();
         if(b != null){
-            mPosition = b.getInt("position");
-            mMovie = Movies.getInstance().getMovieAtPosition(mPosition);
+            mMovie = (Movie) b.get("movie");
             bindViewValues();
         }
         else{
@@ -87,12 +85,11 @@ public class DetailActivity extends AppCompatActivity {
     private void bindViewValues(){
         mTitle.setText(mMovie.getTitle());
         mYear.setText(mMovie.getYear());
-        mDuration.setText(mMovie.getDurationNormalized());
         mOverview.setText(mMovie.getOverview());
-        mVoteAvarage.setText(mMovie.getVoteAvarageNormalized());
+        mVoteAvarage.setText(mMovie.getVote_average() + "/10");
 
         // poster image
-        String posterPath = mMovie.getPosterPath();
+        String posterPath = mMovie.getPoster_path();
         URL thumbURL = NetworkUtils.getThumbURL(posterPath, this, 4);
         Picasso.with(this).load(thumbURL.toString())
                 .fit()

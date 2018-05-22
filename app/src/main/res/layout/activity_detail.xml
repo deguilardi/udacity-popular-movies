@@ -28,7 +28,7 @@
             app:expandedTitleMarginBottom="@dimen/title_padding_vertical"
             app:titleEnabled="false">
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/title"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/title_height"
@@ -38,9 +38,9 @@
                 android:paddingRight="@dimen/title_padding_horizontal"
                 android:gravity="center_vertical|bottom"
                 android:textColor="@color/colorTextAccent"
-                android:autoSizeTextType="uniform"
-                android:autoSizeMaxTextSize="@dimen/title_text"
                 android:maxLines="2"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMaxTextSize="@dimen/title_text"
                 app:layout_collapseMode="parallax"
                 tools:text="Chappie"/>
 

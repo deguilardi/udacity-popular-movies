@@ -6,14 +6,20 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.guilardi.popularmovies.BuildConfig;
-import com.guilardi.popularmovies.Config;
+import com.guilardi.popularmovies.data.Movies;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import retrofit2.http.QueryMap;
 
 /**
  * Created by deguilardi on 5/9/18.
@@ -22,16 +28,15 @@ import java.util.Scanner;
 public final class NetworkUtils {
     private static final String TAG = NetworkUtils.class.getSimpleName();
     private static final String PARAM_API_KEY = "api_key";
+    private static final String BASE_URL = "https://api.themoviedb.org/3/movie/";
+    public static final String PATH_VIDEOS_POPULAR = "popular";
+    public static final String PATH_VIDEOS_TOP_RATED = "top_rated";
 
-    // movie constraints
-    public abstract static class C_MOVIE{
-        public static final String SERVER_URL = "https://api.themoviedb.org/3";
-        public static final String PATH_MOVIES_POPULAR = "movie/popular";
-        public static final String PATH_MOVIES_TOP_RATED = "movie/top_rated";
-    }
+    protected static NetworkUtils instance;
+    private Service service;
 
     // thumb constraints
-    public abstract static class C_THUMB {
+    public abstract static class C_THUMB{
         public static final String SERVER_URL = "http://image.tmdb.org/t";
         public static final String PATH_SIZE_ORIGINAL = "/p/original";
         public static final String PATH_SIZE_THUMB_92 = "/p/w92";
@@ -42,8 +47,31 @@ public final class NetworkUtils {
         public static final String PATH_SIZE_THUMB_780 = "/p/w780";
     }
 
-    public static URL getMoviesListURLWithType(String type){
-        return getURL(NetworkUtils.C_MOVIE.SERVER_URL, type);
+    private NetworkUtils(){
+        if(BuildConfig.MOVIE_DB_API_KEY.equals("") || BuildConfig.MOVIE_DB_API_KEY.equals("YOUR_API_KEY")){
+            throw new RuntimeException("Config.MOVIE_DB_API_KEY must be defined");
+        }
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        this.service = retrofit.create(Service.class);
+    }
+
+    public static synchronized NetworkUtils getInstance() {
+        if(instance == null){
+            instance = new NetworkUtils();
+        }
+        return instance;
+    }
+
+    public void loadMovies(String showBy, Callback<Movies> callback){
+        Map<String,String> params = new HashMap<>();
+        params.put(PARAM_API_KEY, BuildConfig.MOVIE_DB_API_KEY);
+        Call<Movies> call = service.loadMovies(showBy, params);
+        call.enqueue(callback);
     }
 
     public static URL getThumbURL(String posterPath, Activity context, int widthDivider){
@@ -73,18 +101,10 @@ public final class NetworkUtils {
             size = NetworkUtils.C_THUMB.PATH_SIZE_THUMB_92;
         }
 
-        return getURL(NetworkUtils.C_THUMB.SERVER_URL, size + posterPath);
-    }
-
-    public static URL getURL(String serverUrl, String path){
-        return buildUrlWithServerAndPath(serverUrl, path);
+        return buildUrlWithServerAndPath(C_THUMB.SERVER_URL, size + posterPath);
     }
 
     private static URL buildUrlWithServerAndPath(String serverUrl, String path) {
-        if(BuildConfig.MOVIE_DB_API_KEY.equals("") || BuildConfig.MOVIE_DB_API_KEY.equals("YOUR_API_KEY")){
-            throw new RuntimeException("Config.MOVIE_DB_API_KEY must be defined");
-        }
-
         Uri queryUri = Uri.parse(serverUrl).buildUpon()
                 .appendEncodedPath(path)
                 .appendQueryParameter(PARAM_API_KEY, BuildConfig.MOVIE_DB_API_KEY)
@@ -99,23 +119,12 @@ public final class NetworkUtils {
         }
     }
 
-    public static String getResponseFromHttpUrl(URL url) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-        try {
-            InputStream in = urlConnection.getInputStream();
 
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-
-            boolean hasInput = scanner.hasNext();
-            String response = null;
-            if (hasInput) {
-                response = scanner.next();
-            }
-            scanner.close();
-            return response;
-        } finally {
-            urlConnection.disconnect();
-        }
+    /**
+     * RETROFIT INTERFACES AND CLASSES
+     */
+    interface Service{
+        @GET("{showBy}")
+        Call<Movies> loadMovies(@Path("showBy") String showBy, @QueryMap Map<String,String> params);
     }
 }

@@ -59,7 +59,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
 
         // parse te result
         Movie movie = mData.getMovieAtPosition(position);
-        String posterPath = movie.getPosterPath();
+        String posterPath = movie.getPoster_path();
         URL thumbURL = NetworkUtils.getThumbURL(posterPath, mContext, Config.HOME_LIST_NUM_COLUMNS);
         Picasso.with(mContext).load(thumbURL.toString())
                 .resize(sizeW, sizeH)
@@ -76,6 +76,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
     public void swapData(Movies data) {
         mData = data;
         notifyDataSetChanged();
+    }
+
+    public Movies getData(){
+        return mData;
     }
 
     class MovieAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
