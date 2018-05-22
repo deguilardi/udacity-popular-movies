@@ -98,19 +98,6 @@
                     app:layout_constraintTop_toTopOf="@id/thumb_view" />
 
                 <TextView
-                    android:id="@+id/duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="@dimen/fab_margin"
-                    android:gravity="center_vertical"
-                    android:textColor="@color/colorText"
-                    android:textSize="20sp"
-                    android:textStyle="bold|italic"
-                    tools:text="120min"
-                    app:layout_constraintLeft_toLeftOf="@+id/year"
-                    app:layout_constraintTop_toBottomOf="@id/year" />
-
-                <TextView
                     android:id="@+id/vote_avarage"
                     android:layout_width="wrap_content"
                     android:layout_height="40sp"
@@ -120,8 +107,8 @@
                     android:textSize="15sp"
                     android:textStyle="bold"
                     tools:text="8.1/10"
-                    app:layout_constraintLeft_toLeftOf="@+id/duration"
-                    app:layout_constraintTop_toBottomOf="@id/duration" />
+                    app:layout_constraintLeft_toLeftOf="@+id/year"
+                    app:layout_constraintTop_toBottomOf="@id/year" />
 
                 <TextView
                     android:id="@+id/overview"

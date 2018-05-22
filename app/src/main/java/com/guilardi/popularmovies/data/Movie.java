@@ -51,6 +51,15 @@ public class Movie implements Serializable {
     private String poster_path;
     private Double vote_average;
     private String overview;
+    private String release_date;
+
+    public String getRelease_date() {
+        return release_date;
+    }
+
+    public void setRelease_date(String release_date) {
+        this.release_date = release_date;
+    }
 
     private String year;
     private Boolean favorite;
@@ -96,11 +105,7 @@ public class Movie implements Serializable {
     }
 
     public String getYear() {
-        return year;
-    }
-
-    public void setYear(String year) {
-        this.year = year;
+        return release_date.substring(0, 4);
     }
 
     public Boolean getFavorite() {
