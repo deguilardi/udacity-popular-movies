@@ -6,6 +6,7 @@
 
     <ImageView
         android:id="@+id/thumb_view"
+        android:transitionName="@string/transition_thumb"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

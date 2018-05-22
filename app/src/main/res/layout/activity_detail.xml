@@ -1,115 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.guilardi.popularmovies.MainActivity"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay" >
 
-        <TextView
-            android:id="@+id/title"
+        <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/title_size"
-            android:paddingTop="@dimen/title_padding_vertical"
-            android:paddingBottom="@dimen/title_padding_vertical"
-            android:paddingLeft="@dimen/title_padding_horizontal"
-            android:paddingRight="@dimen/title_padding_horizontal"
-            android:gravity="center_vertical"
-            android:textColor="@color/colorTextAccent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
             android:background="@color/colorSecondaryDark"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMaxTextSize="@dimen/title_text"
-            android:maxLines="2"
-            tools:text="Chappie"/>
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap|enterAlways"
+            app:contentScrim="@color/colorSecondaryDark"
+            app:expandedTitleMarginStart="@dimen/title_padding_horizontal"
+            app:expandedTitleMarginEnd="@dimen/title_padding_horizontal"
+            app:expandedTitleMarginTop="@dimen/title_padding_vertical"
+            app:expandedTitleMarginBottom="@dimen/title_padding_vertical"
+            app:titleEnabled="false">
 
-        <ImageView
-            android:id="@+id/thumb_view"
-            android:layout_width="150dp"
-            android:layout_height="200dp"
-            android:layout_marginStart="@dimen/detail_thumb_marging_horizontal"
-            android:layout_marginTop="@dimen/fab_margin"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/title" />
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/title_height"
+                android:paddingTop="@dimen/title_padding_vertical"
+                android:paddingBottom="@dimen/title_padding_vertical"
+                android:paddingLeft="@dimen/title_padding_horizontal"
+                android:paddingRight="@dimen/title_padding_horizontal"
+                android:gravity="center_vertical|bottom"
+                android:textColor="@color/colorTextAccent"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMaxTextSize="@dimen/title_text"
+                android:maxLines="2"
+                app:layout_collapseMode="parallax"
+                tools:text="Chappie"/>
 
-        <TextView
-            android:id="@+id/year"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/detail_thumb_marging_horizontal"
-            android:gravity="center_vertical"
-            android:textColor="@color/colorText"
-            android:textSize="25sp"
-            tools:text="2015"
-            app:layout_constraintLeft_toRightOf="@+id/thumb_view"
-            app:layout_constraintTop_toTopOf="@id/thumb_view" />
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:elevation="@dimen/elevation_medium"
+                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:layout_collapseMode="pin" />
 
-        <TextView
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/fab_margin"
-            android:gravity="center_vertical"
-            android:textColor="@color/colorText"
-            android:textSize="20sp"
-            android:textStyle="bold|italic"
-            tools:text="120min"
-            app:layout_constraintLeft_toLeftOf="@+id/year"
-            app:layout_constraintTop_toBottomOf="@id/year" />
+        </android.support.design.widget.CollapsingToolbarLayout>
 
-        <TextView
-            android:id="@+id/vote_avarage"
-            android:layout_width="wrap_content"
-            android:layout_height="40sp"
-            android:layout_marginEnd="@dimen/fab_margin"
-            android:gravity="center_vertical"
-            android:textColor="@color/colorTextDark"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            tools:text="8.1/10"
-            app:layout_constraintLeft_toLeftOf="@+id/duration"
-            app:layout_constraintTop_toBottomOf="@id/duration" />
+    </android.support.design.widget.AppBarLayout>
 
-        <TextView
-            android:id="@+id/overview"
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:layout_marginEnd="@dimen/fab_margin"
-            android:layout_marginTop="@dimen/fab_margin"
-            android:gravity="center_vertical"
-            android:textColor="@color/colorText"
-            tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/thumb_view" />
+            android:orientation="vertical"
+            app:layout_scrollFlags="scroll">
 
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="1dip"
-            android:layout_marginStart="@dimen/fab_margin"
-            android:layout_marginEnd="@dimen/fab_margin"
-            android:layout_marginTop="@dimen/fab_margin"
-            android:background="@color/colorText"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/overview"/>
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/pb_loading_indicator"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:visibility="invisible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                <ImageView
+                    android:id="@+id/thumb_view"
+                    android:transitionName="@string/transition_thumb"
+                    android:layout_width="123dp"
+                    android:layout_height="200dp"
+                    android:background="@color/colorPrimary"
+                    android:layout_marginStart="@dimen/fab_margin"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:elevation="@dimen/elevation_medium"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-    </android.support.constraint.ConstraintLayout>
-</ScrollView>
+                <TextView
+                    android:id="@+id/year"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/detail_thumb_marging_horizontal"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorText"
+                    android:textSize="25sp"
+                    tools:text="2015"
+                    app:layout_constraintLeft_toRightOf="@+id/thumb_view"
+                    app:layout_constraintTop_toTopOf="@id/thumb_view" />
+
+                <TextView
+                    android:id="@+id/duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorText"
+                    android:textSize="20sp"
+                    android:textStyle="bold|italic"
+                    tools:text="120min"
+                    app:layout_constraintLeft_toLeftOf="@+id/year"
+                    app:layout_constraintTop_toBottomOf="@id/year" />
+
+                <TextView
+                    android:id="@+id/vote_avarage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40sp"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextDark"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    tools:text="8.1/10"
+                    app:layout_constraintLeft_toLeftOf="@+id/duration"
+                    app:layout_constraintTop_toBottomOf="@id/duration" />
+
+                <TextView
+                    android:id="@+id/overview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/fab_margin"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorText"
+                    tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/thumb_view" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dip"
+                    android:layout_marginStart="@dimen/fab_margin"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:background="@color/colorText"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/overview"/>
+
+                <ProgressBar
+                    android:id="@+id/pb_loading_indicator"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:visibility="invisible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

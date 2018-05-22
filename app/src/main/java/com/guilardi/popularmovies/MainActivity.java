@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.guilardi.popularmovies.data.Movies;
 import com.guilardi.popularmovies.utilities.NetworkUtils;
@@ -37,6 +39,7 @@ public class MainActivity
     private MoviesAdapter mMoviesAdapter;
     private int mPosition = RecyclerView.NO_POSITION;
     private String mShowBy;
+    private boolean mHasSelection;
 
     @BindView(R.id.recyclerview_movies_list) RecyclerView mRecyclerView;
     @BindView(R.id.pb_loading_indicator) ProgressBar mLoadingIndicator;
@@ -62,6 +65,12 @@ public class MainActivity
         // start/load data
         setupSharedPreferences();
         loadMoviesData();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        mHasSelection = false;
     }
 
     private void loadMoviesData(){
@@ -101,10 +110,19 @@ public class MainActivity
      * @param position The position of the selected item
      */
     @Override
-    public void onClick(int position) {
+    public void onClick(int position, MoviesAdapter.MovieAdapterViewHolder adapterViewHolder) {
+        if(mHasSelection){
+            return;
+        }
+        mHasSelection = true;
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this,
+                adapterViewHolder.getThumbView(),
+                getString(R.string.transition_thumb)
+            );
+
         Intent detailsActivityIntent = new Intent(MainActivity.this, DetailActivity.class);
         detailsActivityIntent.putExtra("position", position);
-        startActivity(detailsActivityIntent);
+        startActivity(detailsActivityIntent, options.toBundle());
     }
 
     /**
@@ -191,6 +209,7 @@ public class MainActivity
                         showMoviesDataView();
                     }
                 } catch (JSONException e){
+                    Toast.makeText(getParent(), "Something went wrong, please check your internet connection and try again!", Toast.LENGTH_LONG).show();
                     Log.e(TAG, e.getMessage());
                 }
             }

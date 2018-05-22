@@ -46,7 +46,7 @@ public final class NetworkUtils {
         return getURL(NetworkUtils.C_MOVIE.SERVER_URL, type);
     }
 
-    public static URL getThumbURL(String posterPath, Activity context){
+    public static URL getThumbURL(String posterPath, Activity context, int widthDivider){
 
         // define the size based on the screen width
         // this will make sure the downloaded image is the best fit
@@ -54,19 +54,19 @@ public final class NetworkUtils {
         DisplayMetrics displayMetrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int screenWidth = displayMetrics.widthPixels;
-        if(screenWidth > 500*Config.HOME_LIST_NUM_COLUMNS){
+        if(screenWidth > 500 * widthDivider){
             size = NetworkUtils.C_THUMB.PATH_SIZE_THUMB_780;
         }
-        else if(screenWidth > 342*Config.HOME_LIST_NUM_COLUMNS){
+        else if(screenWidth > 342 * widthDivider){
             size = NetworkUtils.C_THUMB.PATH_SIZE_THUMB_500;
         }
-        else if(screenWidth > 185*Config.HOME_LIST_NUM_COLUMNS){
+        else if(screenWidth > 185 * widthDivider){
             size = NetworkUtils.C_THUMB.PATH_SIZE_THUMB_342;
         }
-        else if(screenWidth > 154*Config.HOME_LIST_NUM_COLUMNS){
+        else if(screenWidth > 154 * widthDivider){
             size = NetworkUtils.C_THUMB.PATH_SIZE_THUMB_185;
         }
-        else if(screenWidth > 92*Config.HOME_LIST_NUM_COLUMNS){
+        else if(screenWidth > 92 * widthDivider){
             size = NetworkUtils.C_THUMB.PATH_SIZE_THUMB_154;
         }
         else{

@@ -32,7 +32,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
     final private MovieAdapterOnClickHandler mClickHandler;
 
     public interface MovieAdapterOnClickHandler {
-        void onClick(int position);
+        void onClick(int position, MovieAdapterViewHolder adapterViewHolder);
     }
 
     public MoviesAdapter(@NonNull Activity context, MovieAdapterOnClickHandler clickHandler) {
@@ -60,7 +60,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
         // parse te result
         Movie movie = mData.getMovieAtPosition(position);
         String posterPath = movie.getPosterPath();
-        URL thumbURL = NetworkUtils.getThumbURL(posterPath, mContext);
+        URL thumbURL = NetworkUtils.getThumbURL(posterPath, mContext, Config.HOME_LIST_NUM_COLUMNS);
         Picasso.with(mContext).load(thumbURL.toString())
                 .resize(sizeW, sizeH)
                 .centerCrop()
@@ -90,7 +90,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            mClickHandler.onClick(position);
+            mClickHandler.onClick(position, this);
+        }
+
+        public ImageView getThumbView(){
+            return thumbView;
         }
     }
 }
