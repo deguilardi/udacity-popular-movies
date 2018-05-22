@@ -6,7 +6,10 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 
 import com.guilardi.popularmovies.BuildConfig;
+import com.guilardi.popularmovies.data.Movie;
 import com.guilardi.popularmovies.data.Movies;
+import com.guilardi.popularmovies.data.Reviews;
+import com.guilardi.popularmovies.data.Trailers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -29,8 +32,10 @@ public final class NetworkUtils {
     private static final String TAG = NetworkUtils.class.getSimpleName();
     private static final String PARAM_API_KEY = "api_key";
     private static final String BASE_URL = "https://api.themoviedb.org/3/movie/";
-    public static final String PATH_VIDEOS_POPULAR = "popular";
-    public static final String PATH_VIDEOS_TOP_RATED = "top_rated";
+    private static final String PATH_VIDEOS_POPULAR = "popular";
+    private static final String PATH_VIDEOS_TOP_RATED = "top_rated";
+    private static final String PATH_VIDEO_VIDEOS = "videos";
+    private static final String PATH_VIDEO_REVIEWS = "reviews";
 
     protected static NetworkUtils instance;
     private Service service;
@@ -71,6 +76,20 @@ public final class NetworkUtils {
         Map<String,String> params = new HashMap<>();
         params.put(PARAM_API_KEY, BuildConfig.MOVIE_DB_API_KEY);
         Call<Movies> call = service.loadMovies(showBy, params);
+        call.enqueue(callback);
+    }
+
+    public void loadTrailers(Movie movie, Callback<Trailers> callback){
+        Map<String,String> params = new HashMap<>();
+        params.put(PARAM_API_KEY, BuildConfig.MOVIE_DB_API_KEY);
+        Call<Trailers> call = service.loadTrailers(movie.getId(), params);
+        call.enqueue(callback);
+    }
+
+    public void loadReviews(Movie movie, Callback<Reviews> callback){
+        Map<String,String> params = new HashMap<>();
+        params.put(PARAM_API_KEY, BuildConfig.MOVIE_DB_API_KEY);
+        Call<Reviews> call = service.loadReviews(movie.getId(), params);
         call.enqueue(callback);
     }
 
@@ -126,5 +145,11 @@ public final class NetworkUtils {
     interface Service{
         @GET("{showBy}")
         Call<Movies> loadMovies(@Path("showBy") String showBy, @QueryMap Map<String,String> params);
+
+        @GET("{movieID}/" + PATH_VIDEO_VIDEOS)
+        Call<Trailers> loadTrailers(@Path("movieID") Integer movieID, @QueryMap Map<String,String> params);
+
+        @GET("{movieID}/" + PATH_VIDEO_REVIEWS)
+        Call<Reviews> loadReviews(@Path("movieID") Integer movieID, @QueryMap Map<String,String> params);
     }
 }

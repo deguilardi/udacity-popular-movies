@@ -25,8 +25,6 @@ import butterknife.ButterKnife;
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapterViewHolder>{
 
-    private static final String TAG = MoviesAdapter.class.getSimpleName();
-
     Activity mContext;
     private Movies mData;
     final private MovieAdapterOnClickHandler mClickHandler;
@@ -40,6 +38,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
         mClickHandler = clickHandler;
     }
 
+    @NonNull
     @Override
     public MovieAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(mContext).inflate(R.layout.movies_list_item, viewGroup, false);
@@ -48,7 +47,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
     }
 
     @Override
-    public void onBindViewHolder(MovieAdapterViewHolder movieAdapterViewHolder, int position) {
+    public void onBindViewHolder(@NonNull MovieAdapterViewHolder movieAdapterViewHolder, int position) {
 
         // define the image size based on device size
         DisplayMetrics displayMetrics = new DisplayMetrics();

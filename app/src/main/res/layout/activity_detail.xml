@@ -74,14 +74,14 @@
 
                 <ImageView
                     android:id="@+id/thumb_view"
-                    android:transitionName="@string/transition_thumb"
                     android:layout_width="123dp"
                     android:layout_height="200dp"
-                    android:background="@color/colorPrimary"
-                    android:layout_marginStart="@dimen/fab_margin"
                     android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginStart="@dimen/fab_margin"
                     android:layout_marginTop="@dimen/fab_margin"
+                    android:background="@color/colorPrimary"
                     android:elevation="@dimen/elevation_medium"
+                    android:transitionName="@string/transition_thumb"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -93,9 +93,9 @@
                     android:gravity="center_vertical"
                     android:textColor="@color/colorText"
                     android:textSize="25sp"
-                    tools:text="2015"
                     app:layout_constraintLeft_toRightOf="@+id/thumb_view"
-                    app:layout_constraintTop_toTopOf="@id/thumb_view" />
+                    app:layout_constraintTop_toTopOf="@id/thumb_view"
+                    tools:text="2015" />
 
                 <TextView
                     android:id="@+id/vote_avarage"
@@ -106,45 +106,105 @@
                     android:textColor="@color/colorTextDark"
                     android:textSize="15sp"
                     android:textStyle="bold"
-                    tools:text="8.1/10"
                     app:layout_constraintLeft_toLeftOf="@+id/year"
-                    app:layout_constraintTop_toBottomOf="@id/year" />
+                    app:layout_constraintTop_toBottomOf="@id/year"
+                    tools:text="8.1/10" />
 
                 <TextView
                     android:id="@+id/overview"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/fab_margin"
                     android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginStart="@dimen/fab_margin"
                     android:layout_marginTop="@dimen/fab_margin"
                     android:gravity="center_vertical"
                     android:textColor="@color/colorText"
-                    tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/thumb_view" />
+                    app:layout_constraintTop_toBottomOf="@id/thumb_view"
+                    tools:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor" />
 
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="1dip"
-                    android:layout_marginStart="@dimen/fab_margin"
+
+                <!-- TRAILERS -->
+
+                <TextView
+                    android:id="@+id/title_trailers"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginStart="@dimen/fab_margin"
                     android:layout_marginTop="@dimen/fab_margin"
-                    android:background="@color/colorText"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/overview"/>
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorText"
+                    android:text="@string/title_trailers"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="@id/overview"
+                    app:layout_constraintTop_toBottomOf="@id/overview"
+                    tools:text="Trailers:" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_trailers_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginStart="@dimen/fab_margin"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:clipToPadding="false"
+                    app:layout_constraintStart_toStartOf="@+id/title_trailers"
+                    app:layout_constraintTop_toBottomOf="@+id/title_trailers" />
 
                 <ProgressBar
-                    android:id="@+id/pb_loading_indicator"
+                    android:id="@+id/pb_trailers_loading"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:layout_gravity="center"
                     android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:visibility="invisible"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@+id/title_trailers" />
+
+
+
+                <!-- REVIEWS -->
+
+                <TextView
+                    android:id="@+id/title_reviews"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginStart="@dimen/fab_margin"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorText"
+                    android:text="@string/title_reviews"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="@id/recyclerview_trailers_list"
+                    app:layout_constraintTop_toBottomOf="@id/recyclerview_trailers_list"
+                    tools:text="Trailers:" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_reviews_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginStart="@dimen/fab_margin"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:clipToPadding="false"
+                    app:layout_constraintStart_toStartOf="@+id/title_reviews"
+                    app:layout_constraintTop_toBottomOf="@+id/title_reviews" />
+
+                <ProgressBar
+                    android:id="@+id/pb_reveiews_loading"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title_reviews" />
 
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>

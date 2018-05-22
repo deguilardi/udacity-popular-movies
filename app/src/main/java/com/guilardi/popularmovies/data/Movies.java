@@ -8,8 +8,6 @@ package com.guilardi.popularmovies.data;
 
 public class Movies {
 
-    private static final String TAG = Movies.class.getSimpleName();
-
     private Integer page;
     private Integer total_results;
     private Integer total_pages;

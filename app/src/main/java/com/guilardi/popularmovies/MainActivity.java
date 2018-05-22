@@ -29,8 +29,6 @@ public class MainActivity
         extends AppCompatActivity
         implements MoviesAdapter.MovieAdapterOnClickHandler, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
-
     private MoviesAdapter mMoviesAdapter;
     private int mPosition = RecyclerView.NO_POSITION;
     private String mShowBy;
