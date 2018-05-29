@@ -1,6 +1,7 @@
 package com.guilardi.popularmovies;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -74,6 +75,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
 
     public void swapData(Movies data) {
         mData = data;
+        notifyDataSetChanged();
+    }
+
+    public void swapData(Cursor cursor){
+        mData = new Movies(cursor);
         notifyDataSetChanged();
     }
 

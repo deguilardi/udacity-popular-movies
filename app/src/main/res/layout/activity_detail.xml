@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             android:background="@color/colorSecondaryDark"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap|enterAlways"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:contentScrim="@color/colorSecondaryDark"
             app:expandedTitleMarginStart="@dimen/title_padding_horizontal"
             app:expandedTitleMarginEnd="@dimen/title_padding_horizontal"
@@ -110,6 +110,16 @@
                     app:layout_constraintTop_toBottomOf="@id/year"
                     tools:text="8.1/10" />
 
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_favorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/action_mark_as_favorite"
+                    android:textSize="12sp"
+                    app:backgroundTint="@color/colorSecondary"
+                    app:layout_constraintLeft_toLeftOf="@+id/vote_avarage"
+                    app:layout_constraintTop_toBottomOf="@id/vote_avarage" />
+
                 <TextView
                     android:id="@+id/overview"
                     android:layout_width="match_parent"
@@ -149,6 +159,7 @@
                     android:layout_marginStart="@dimen/fab_margin"
                     android:layout_marginTop="@dimen/fab_margin"
                     android:clipToPadding="false"
+                    android:visibility="invisible"
                     app:layout_constraintStart_toStartOf="@+id/title_trailers"
                     app:layout_constraintTop_toBottomOf="@+id/title_trailers" />
 
@@ -163,6 +174,21 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title_trailers" />
+
+                <TextView
+                    android:id="@+id/trailers_error_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginStart="@dimen/fab_margin"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorText"
+                    android:text="@string/message_no_content"
+                    android:visibility="invisible"
+                    app:layout_constraintLeft_toLeftOf="@id/title_trailers"
+                    app:layout_constraintTop_toBottomOf="@id/title_trailers"
+                    tools:text="@string/message_no_content" />
 
 
 
@@ -191,6 +217,7 @@
                     android:layout_marginStart="@dimen/fab_margin"
                     android:layout_marginTop="@dimen/fab_margin"
                     android:clipToPadding="false"
+                    android:visibility="invisible"
                     app:layout_constraintStart_toStartOf="@+id/title_reviews"
                     app:layout_constraintTop_toBottomOf="@+id/title_reviews" />
 
@@ -205,6 +232,21 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title_reviews" />
+
+                <TextView
+                    android:id="@+id/reviews_error_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/fab_margin"
+                    android:layout_marginStart="@dimen/fab_margin"
+                    android:layout_marginTop="@dimen/fab_margin"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorText"
+                    android:text="@string/message_no_content"
+                    android:visibility="invisible"
+                    app:layout_constraintLeft_toLeftOf="@id/title_reviews"
+                    app:layout_constraintTop_toBottomOf="@id/title_reviews"
+                    tools:text="@string/message_no_content" />
 
             </android.support.constraint.ConstraintLayout>
         </LinearLayout>

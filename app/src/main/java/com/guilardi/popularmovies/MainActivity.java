@@ -1,7 +1,11 @@
 package com.guilardi.popularmovies;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -16,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.guilardi.popularmovies.data.Movie;
 import com.guilardi.popularmovies.data.Movies;
 import com.guilardi.popularmovies.utilities.NetworkUtils;
 
@@ -57,16 +62,23 @@ public class MainActivity
 
         // start/load data
         setupSharedPreferences();
-        loadMoviesData();
+        if(!mShowBy.equals("favorite")){
+            loadMoviesData();
+        }
     }
 
     @Override
     public void onResume(){
         super.onResume();
         mHasSelection = false;
+
+        if(mShowBy.equals("favorite")){
+            loadMoviesData();
+        }
     }
 
     private void loadMoviesData(){
+        final Context context = this;
         Callback<Movies> callback = new Callback<Movies>(){
 
             @Override
@@ -79,6 +91,15 @@ public class MainActivity
                 mRecyclerView.smoothScrollToPosition(mPosition);
                 if (movies != null && movies.length() != 0) {
                     showMoviesDataView();
+
+                    // save the returned value to the database
+                    ContentValues[] contentValues = movies.getContentValues();
+                    if (contentValues != null && contentValues.length != 0) {
+                        ContentResolver contentResolver = context.getContentResolver();
+                        contentResolver.delete(Movie.MovieEntry.CONTENT_URI,
+                                Movie.MovieEntry.COLUMN_IS_FAVORITE + "=?", new String[]{"false"});
+                        contentResolver.bulkInsert(Movie.MovieEntry.CONTENT_URI, contentValues);
+                    }
                 }
             }
 
@@ -87,8 +108,35 @@ public class MainActivity
                 Toast.makeText(getParent(), "Something went wrong, please check your internet connection and try again!", Toast.LENGTH_LONG).show();
             }
         };
-        NetworkUtils.getInstance().loadMovies(mShowBy, callback);
-        showLoading();
+
+        if(mShowBy.equals("favorite")){
+            ContentResolver contentResolver = context.getContentResolver();
+            Cursor cursor = contentResolver.query(Movie.MovieEntry.CONTENT_URI,
+                    new String[]{Movie.MovieEntry.COLUMN_ID,
+                            Movie.MovieEntry.COLUMN_TITLE,
+                            Movie.MovieEntry.COLUMN_POSTER_PATH,
+                            Movie.MovieEntry.COLUMN_VOTE_AVARAGE,
+                            Movie.MovieEntry.COLUMN_OVERVIEW,
+                            Movie.MovieEntry.COLUMN_RELEASE_DATE,
+                            Movie.MovieEntry.COLUMN_IS_FAVORITE},
+                    Movie.MovieEntry.COLUMN_IS_FAVORITE+"=?",
+                    new String[]{"1"},
+                    null);
+
+            int count = 0;
+            if(cursor != null){
+                count =  cursor.getCount();
+                mMoviesAdapter.swapData(cursor);
+                cursor.close();
+            }
+            if(count == 0){
+                Toast.makeText(this, "There is no favorite movie", Toast.LENGTH_LONG).show();
+            }
+        }
+        else {
+            NetworkUtils.getInstance().loadMovies(mShowBy, callback);
+            showLoading();
+        }
     }
 
     @Override

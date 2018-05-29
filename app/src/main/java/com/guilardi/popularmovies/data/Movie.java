@@ -1,5 +1,6 @@
 package com.guilardi.popularmovies.data;
 
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
@@ -27,29 +28,37 @@ public class Movie implements Serializable {
                 .build();
 
         public static final String TABLE_NAME = "movies";
-        public static final String COLUMN_VOTE_COUNT = "vote_count";
         public static final String COLUMN_ID = "id";
-        public static final String COLUMN_HAS_VIDEO = "has_video";
         public static final String COLUMN_VOTE_AVARAGE = "vote_avarage";
         public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_POPULARITY = "popularity";
         public static final String COLUMN_POSTER_PATH = "poster_path";
-        public static final String COLUMN_ORIGINAL_LANGUAGE = "original_language";
-        public static final String COLUMN_ORIGINAL_TITLE = "original_title";
-        public static final String COLUMN_BACKDROP_PATH = "backdrop_path";
-        public static final String COLUMN_IS_ADULT = "is_adult";
         public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_RELEASE_DATE = "release_date";
         public static final String COLUMN_IS_FAVORITE = "is_favorite";
     }
 
 
+    // remote fields
     private Integer id;
     private String title;
     private String poster_path;
     private Double vote_average;
     private String overview;
     private String release_date;
+
+    // these fields aren't from remote json
+    private String year;
+    private Boolean favorite = false;
+
+    public Movie(Cursor cursor){
+        id = cursor.getInt(cursor.getColumnIndex(MovieEntry.COLUMN_ID));
+        title = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_TITLE));
+        poster_path = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_POSTER_PATH));
+        vote_average = cursor.getDouble(cursor.getColumnIndex(MovieEntry.COLUMN_VOTE_AVARAGE));
+        overview = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_OVERVIEW));
+        release_date = cursor.getString(cursor.getColumnIndex(MovieEntry.COLUMN_RELEASE_DATE));
+        favorite = cursor.getInt(cursor.getColumnIndex(MovieEntry.COLUMN_IS_FAVORITE)) == 1;
+    }
 
     public String getRelease_date() {
         return release_date;
@@ -58,9 +67,6 @@ public class Movie implements Serializable {
     public void setRelease_date(String release_date) {
         this.release_date = release_date;
     }
-
-    private String year;
-    private Boolean favorite;
 
     public Integer getId() {
         return id;
@@ -112,5 +118,12 @@ public class Movie implements Serializable {
 
     public void setFavorite(Boolean favorite) {
         this.favorite = favorite;
+    }
+
+    public Uri getContentUri(){
+        return BASE_CONTENT_URI.buildUpon()
+                .appendPath(PATH_MOVIES)
+                .appendPath(getId().toString())
+                .build();
     }
 }

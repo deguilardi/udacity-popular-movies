@@ -23,16 +23,9 @@ public class DbHelper extends SQLiteOpenHelper {
         final String SQL_CREATE_MOVIES_TABLE =
                 "CREATE TABLE " + Movie.MovieEntry.TABLE_NAME + " (" +
                         Movie.MovieEntry.COLUMN_ID                + " INTEGER NOT NULL PRIMARY KEY, " +
-                        Movie.MovieEntry.COLUMN_VOTE_COUNT        + " INTEGER NOT NULL, " +
-                        Movie.MovieEntry.COLUMN_HAS_VIDEO         + " NUMERIC NOT NULL, " +
                         Movie.MovieEntry.COLUMN_VOTE_AVARAGE      + " INTEGER NOT NULL, " +
                         Movie.MovieEntry.COLUMN_TITLE             + " TEXT NOT NULL, " +
-                        Movie.MovieEntry.COLUMN_POPULARITY        + " REAL NOT NULL, " +
                         Movie.MovieEntry.COLUMN_POSTER_PATH       + " TEXT NOT NULL, " +
-                        Movie.MovieEntry.COLUMN_ORIGINAL_LANGUAGE + " TEXT NOT NULL, " +
-                        Movie.MovieEntry.COLUMN_ORIGINAL_TITLE    + " TEXT NOT NULL, " +
-                        Movie.MovieEntry.COLUMN_BACKDROP_PATH     + " TEXT NOT NULL, " +
-                        Movie.MovieEntry.COLUMN_IS_ADULT          + " NUMERIC NOT NULL, " +
                         Movie.MovieEntry.COLUMN_OVERVIEW          + " TEXT NOT NULL, " +
                         Movie.MovieEntry.COLUMN_RELEASE_DATE      + " TEXT NOT NULL, " +
                         Movie.MovieEntry.COLUMN_IS_FAVORITE       + " NUMERIC NOT NULL, " +

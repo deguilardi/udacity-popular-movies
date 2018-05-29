@@ -3,9 +3,11 @@
     <array name="pref_show_by_entries">
         <item>@string/pref_show_by_popularity</item>
         <item>@string/pref_show_by_rating</item>
+        <item>@string/pref_show_by_favorite</item>
     </array>
     <array name="pref_show_by_values">
         <item>popular</item>
         <item>top_rated</item>
+        <item>favorite</item>
     </array>
 </resources>

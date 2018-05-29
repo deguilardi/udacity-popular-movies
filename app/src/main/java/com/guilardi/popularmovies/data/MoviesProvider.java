@@ -144,6 +144,13 @@ public class MoviesProvider extends ContentProvider{
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues values, @Nullable String selection, @Nullable String[] selectionArgs) {
-        throw new RuntimeException("update not implemented");
+        int output = 0;
+        switch (mUriMatcher.match(uri)) {
+            case CODE_MOVIE:
+                output = mDbHelper.getReadableDatabase().update(Movie.MovieEntry.TABLE_NAME, values, selection, selectionArgs);
+                break;
+
+        }
+        return output;
     }
 }

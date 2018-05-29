@@ -6,10 +6,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.guilardi.popularmovies.data.Trailer;
 import com.guilardi.popularmovies.data.Trailers;
+import com.guilardi.popularmovies.utilities.NetworkUtils;
+import com.squareup.picasso.Picasso;
+
+import java.net.URL;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,6 +50,12 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
     public void onBindViewHolder(@NonNull TrailersAdapterViewHolder adapterViewHolder, int position) {
         Trailer trailer = mData.getTrailerAtPosition(position);
         adapterViewHolder.title.setText(trailer.getName());
+
+        URL thumbURL = NetworkUtils.getYoutubeThumbURL(trailer);
+        Picasso.with(mContext).load(thumbURL.toString())
+                .fit()
+                .centerCrop()
+                .into(adapterViewHolder.thumb);
     }
 
     @Override
@@ -64,6 +75,7 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
 
     class TrailersAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         @BindView(R.id.title) TextView title;
+        @BindView(R.id.thumb) ImageView thumb;
 
         TrailersAdapterViewHolder(View view) {
             super(view);

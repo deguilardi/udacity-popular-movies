@@ -1,13 +1,20 @@
 package com.guilardi.popularmovies;
 
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,6 +22,7 @@ import android.widget.Toast;
 
 import com.guilardi.popularmovies.data.Movie;
 import com.guilardi.popularmovies.data.Reviews;
+import com.guilardi.popularmovies.data.Trailer;
 import com.guilardi.popularmovies.data.Trailers;
 import com.guilardi.popularmovies.utilities.NetworkUtils;
 import com.squareup.picasso.Picasso;
@@ -32,7 +40,7 @@ import retrofit2.Response;
  */
 
 public class DetailActivity extends AppCompatActivity
-        implements TrailersAdapter.TrailersAdapterOnClickHandler, ReviewsAdapter.ReviewsAdapterOnClickHandler{
+        implements TrailersAdapter.TrailersAdapterOnClickHandler, ReviewsAdapter.ReviewsAdapterOnClickHandler, View.OnClickListener{
 
     private Movie mMovie;
 
@@ -40,18 +48,22 @@ public class DetailActivity extends AppCompatActivity
     private int mTrailersPosition;
     @BindView(R.id.recyclerview_trailers_list) RecyclerView mTrailersRecyclerView;
     @BindView(R.id.pb_trailers_loading) ProgressBar mTrailersLoadingIndicator;
+    @BindView(R.id.trailers_error_message) TextView mTrailersErrorMessage;
 
     private ReviewsAdapter mReviewsAdapter;
     private int mReviewsPosition;
     @BindView(R.id.recyclerview_reviews_list) RecyclerView mReviewsRecyclerView;
     @BindView(R.id.pb_reveiews_loading) ProgressBar mReviewsLoadingIndicator;
+    @BindView(R.id.reviews_error_message) TextView mReviewsErrorMessage;
 
+    @BindView(R.id.main_content) CoordinatorLayout mMainContent;
     @BindView(R.id.thumb_view) ImageView mThumbView;
     @BindView(R.id.year) TextView mYear;
     @BindView(R.id.vote_avarage) TextView mVoteAvarage;
     @BindView(R.id.overview) TextView mOverview;
     @BindView(R.id.toolbar) Toolbar mToolbar;
     @BindView(R.id.title) TextView mTitle;
+    @BindView(R.id.btn_favorite) Button mFavoriteButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,6 +90,24 @@ public class DetailActivity extends AppCompatActivity
             Toast.makeText(this, "An error has occurred. Pleas try again later", Toast.LENGTH_LONG).show();
         }
 
+        // retrieve info from db
+        // basically it's all to know if the movie was favorited or not
+        ContentResolver contentResolver = getContentResolver();
+        Cursor cursor = contentResolver.query(Movie.MovieEntry.CONTENT_URI,
+                new String[]{Movie.MovieEntry.COLUMN_IS_FAVORITE},
+                Movie.MovieEntry.COLUMN_ID+"=?",
+                new String[]{mMovie.getId().toString()},
+                null);
+        if(cursor != null && cursor.getCount() > 0){
+            cursor.moveToFirst();
+            boolean isFavorite = cursor.getInt(0) == 1;
+            mMovie.setFavorite(isFavorite);
+            cursor.close();
+            if(isFavorite){
+                mFavoriteButton.setText(R.string.action_remove_from_favorites);
+            }
+        }
+
         // start layout and adapters
         mTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mTrailersAdapter = new TrailersAdapter(this, this);
@@ -85,6 +115,9 @@ public class DetailActivity extends AppCompatActivity
         mReviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mReviewsAdapter = new ReviewsAdapter(this, this);
         mReviewsRecyclerView.setAdapter(mReviewsAdapter);
+
+        // handle favorite button click
+        mFavoriteButton.setOnClickListener(this);
 
         loadTrailersData();
         loadReviewsData();
@@ -121,6 +154,9 @@ public class DetailActivity extends AppCompatActivity
                 if (trailers != null && trailers.length() != 0) {
                     showTrailersDataView();
                 }
+                else{
+                    showTrailersErrorMessage();
+                }
             }
 
             @Override
@@ -145,6 +181,9 @@ public class DetailActivity extends AppCompatActivity
                 mReviewsRecyclerView.smoothScrollToPosition(mReviewsPosition);
                 if (reviews != null && reviews.length() != 0) {
                     showReviewsDataView();
+                }
+                else{
+                    showReviewsErrorMessage();
                 }
             }
 
@@ -182,6 +221,18 @@ public class DetailActivity extends AppCompatActivity
     }
 
     /**
+     * Show error messages
+     */
+    private void showTrailersErrorMessage(){
+        mTrailersLoadingIndicator.setVisibility(View.INVISIBLE);
+        mTrailersErrorMessage.setVisibility(View.VISIBLE);
+    }
+    private void showReviewsErrorMessage(){
+        mReviewsLoadingIndicator.setVisibility(View.INVISIBLE);
+        mReviewsErrorMessage.setVisibility(View.VISIBLE);
+    }
+
+    /**
      * bind the view values with the mMovie object
      */
     private void bindViewValues(){
@@ -199,13 +250,74 @@ public class DetailActivity extends AppCompatActivity
                 .into(mThumbView);
     }
 
+    // trailers click callback
     @Override
     public void onClick(int position, TrailersAdapter.TrailersAdapterViewHolder adapterViewHolder) {
-
+        Trailer trailer = mTrailersAdapter.getData().getTrailerAtPosition(position);
+        String videoID = trailer.getKey();
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://"+videoID)));
     }
 
+    // reviews click callback
     @Override
     public void onClick(int position, ReviewsAdapter.ReviewsAdapterViewHolder adapterViewHolder) {
 
+    }
+
+    // buttons click callback
+    @Override
+    public void onClick(View view) {
+        int id = view.getId();
+        if(id == R.id.btn_favorite){
+
+            final boolean isFavoriting = !mMovie.getFavorite();
+            final int snackbarMessage;
+            final int snackbarMessage2;
+            if(isFavoriting){
+                snackbarMessage = R.string.message_marked_as_favorite;
+                snackbarMessage2 = R.string.message_removed_from_favorites;
+                setFavorite(true);
+            }
+            else{
+                snackbarMessage = R.string.message_removed_from_favorites;
+                snackbarMessage2 = R.string.message_marked_as_favorite;
+                setFavorite(false);
+            }
+
+            Snackbar snackbar = Snackbar
+                    .make(mMainContent, snackbarMessage, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.action_undo, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View snackbar2View) {
+                            if(isFavoriting){
+                                setFavorite(false);
+                            }
+                            else{
+                                setFavorite(true);
+                            }
+                            Snackbar.make(mMainContent, snackbarMessage2, Snackbar.LENGTH_SHORT)
+                                    .show();
+                        }
+                    });
+            snackbar.show();
+        }
+    }
+
+    private void setFavorite(boolean favorite){
+        mMovie.setFavorite(favorite);
+        if(favorite){
+            mFavoriteButton.setText(R.string.action_remove_from_favorites);
+        }
+        else{
+            mFavoriteButton.setText(R.string.action_mark_as_favorite);
+        }
+
+        ContentResolver contentResolver = getContentResolver();
+        ContentValues values = new ContentValues();
+        values.put(Movie.MovieEntry.COLUMN_IS_FAVORITE, favorite);
+        contentResolver.update(mMovie.getContentUri(),
+                values,
+                Movie.MovieEntry.COLUMN_ID+"=?",
+                new String[]{mMovie.getId().toString()});
     }
 }

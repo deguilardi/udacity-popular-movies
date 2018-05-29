@@ -9,6 +9,7 @@ import com.guilardi.popularmovies.BuildConfig;
 import com.guilardi.popularmovies.data.Movie;
 import com.guilardi.popularmovies.data.Movies;
 import com.guilardi.popularmovies.data.Reviews;
+import com.guilardi.popularmovies.data.Trailer;
 import com.guilardi.popularmovies.data.Trailers;
 
 import java.net.MalformedURLException;
@@ -50,6 +51,12 @@ public final class NetworkUtils {
         public static final String PATH_SIZE_THUMB_342 = "/p/w342";
         public static final String PATH_SIZE_THUMB_500 = "/p/w500";
         public static final String PATH_SIZE_THUMB_780 = "/p/w780";
+    }
+
+    // youtube constraints
+    public abstract  static class C_YOUTUBE{
+        public static final String SERVER_URL = "https://img.youtube.com/vi";
+        public static final String PATH_DEFAULT = "/default.jpg";
     }
 
     private NetworkUtils(){
@@ -120,13 +127,24 @@ public final class NetworkUtils {
             size = NetworkUtils.C_THUMB.PATH_SIZE_THUMB_92;
         }
 
-        return buildUrlWithServerAndPath(C_THUMB.SERVER_URL, size + posterPath);
+        Uri queryUri = Uri.parse(C_THUMB.SERVER_URL).buildUpon()
+                .appendEncodedPath(size + posterPath)
+                .appendQueryParameter(PARAM_API_KEY, BuildConfig.MOVIE_DB_API_KEY)
+                .build();
+        try {
+            URL queryUrl = new URL(queryUri.toString());
+            Log.v(TAG, "URL: " + queryUrl);
+            return queryUrl;
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    private static URL buildUrlWithServerAndPath(String serverUrl, String path) {
-        Uri queryUri = Uri.parse(serverUrl).buildUpon()
-                .appendEncodedPath(path)
-                .appendQueryParameter(PARAM_API_KEY, BuildConfig.MOVIE_DB_API_KEY)
+    public static URL getYoutubeThumbURL(Trailer trailer){
+        String videoID = trailer.getKey();
+        Uri queryUri = Uri.parse(C_YOUTUBE.SERVER_URL).buildUpon()
+                .appendEncodedPath(videoID + C_YOUTUBE.PATH_DEFAULT)
                 .build();
         try {
             URL queryUrl = new URL(queryUri.toString());
