@@ -189,7 +189,7 @@ public class DetailActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<Reviews> call, Throwable t) {
-                Toast.makeText(getParent(), "Something went wrong, please check your internet connection and try again!", Toast.LENGTH_LONG).show();
+                Toast.makeText(getParent(), R.string.message_something_wrong_internet, Toast.LENGTH_LONG).show();
             }
         };
         NetworkUtils.getInstance().loadReviews(mMovie, callback);
@@ -247,15 +247,23 @@ public class DetailActivity extends AppCompatActivity
         Picasso.with(this).load(thumbURL.toString())
                 .fit()
                 .centerCrop()
+                .error(R.drawable.image_not_found)
                 .into(mThumbView);
     }
 
     // trailers click callback
     @Override
     public void onClick(int position, TrailersAdapter.TrailersAdapterViewHolder adapterViewHolder) {
+        Intent youtubeIntent = getPackageManager().getLaunchIntentForPackage("com.google.android.youtube");
         Trailer trailer = mTrailersAdapter.getData().getTrailerAtPosition(position);
         String videoID = trailer.getKey();
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://"+videoID)));
+        if (youtubeIntent != null) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube://" + videoID)));
+        }
+        else{
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + videoID));
+            startActivity(browserIntent);
+        }
     }
 
     // reviews click callback

@@ -5,9 +5,12 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.guilardi.popularmovies.data.Movie;
@@ -19,6 +22,8 @@ import java.net.URL;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static android.content.Context.WINDOW_SERVICE;
 
 /**
  * Created by deguilardi on 5/14/18.
@@ -50,12 +55,22 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
     @Override
     public void onBindViewHolder(@NonNull MovieAdapterViewHolder movieAdapterViewHolder, int position) {
 
+        // define the num of columns based on the device rotation
+        int numColumns = Config.HOME_LIST_NUM_COLUMNS;
+        Display display = ((WindowManager) mContext.getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+        numColumns = display.getRotation() == Surface.ROTATION_0 || display.getRotation() == Surface.ROTATION_180
+                ? numColumns
+                : (int) (numColumns * Config.HOME_LIST_COLUMNS_RATIO);
+
         // define the image size based on device size
         DisplayMetrics displayMetrics = new DisplayMetrics();
         mContext.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         int screenWidth = displayMetrics.widthPixels;
-        int sizeW = (int) (screenWidth / 2);
+        int sizeW = (int) (screenWidth / numColumns);
         int sizeH = (int) (sizeW * 1.63);
+
+        // set the thumb height to fix the elements on the screen and avoid "dancing"
+        movieAdapterViewHolder.thumbView.setMinimumHeight(sizeH);
 
         // parse te result
         Movie movie = mData.getMovieAtPosition(position);
@@ -64,6 +79,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapt
         Picasso.with(mContext).load(thumbURL.toString())
                 .resize(sizeW, sizeH)
                 .centerCrop()
+                .placeholder(R.drawable.progress_animation)
+                .error(R.drawable.image_not_found)
                 .into(movieAdapterViewHolder.thumbView);
     }
 

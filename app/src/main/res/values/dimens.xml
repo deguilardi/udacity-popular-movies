@@ -6,4 +6,13 @@
     <dimen name="title_padding_vertical">30dp</dimen>
     <dimen name="detail_thumb_marging_horizontal">35dp</dimen>
     <dimen name="elevation_medium">6dp</dimen>
+    <dimen name="div_height">1dip</dimen>
+    <dimen name="movie_thumb_width">123dp</dimen>
+    <dimen name="movie_thumb_height">200dp</dimen>
+    <dimen name="trailer_thumb_width">123dp</dimen>
+    <dimen name="trailer_thumb_height">70dp</dimen>
+    <dimen name="text_normal">12sp</dimen>
+    <dimen name="text_medium">15sp</dimen>
+    <dimen name="text_large">25sp</dimen>
+    <dimen name="loading_spinner_size">42dp</dimen>
 </resources>

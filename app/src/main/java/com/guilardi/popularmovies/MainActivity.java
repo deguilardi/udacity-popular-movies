@@ -5,18 +5,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
+import android.view.Surface;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -39,6 +43,8 @@ public class MainActivity
     private String mShowBy;
     private boolean mHasSelection;
 
+    private static String SAVED_SCROLL_POSITION = "savedScrollPosition";
+
     @BindView(R.id.recyclerview_movies_list) RecyclerView mRecyclerView;
     @BindView(R.id.pb_loading_indicator) ProgressBar mLoadingIndicator;
     @BindView(R.id.toolbar) Toolbar mToolbar;
@@ -53,8 +59,15 @@ public class MainActivity
         setSupportActionBar(mToolbar);
         PreferenceManager.setDefaultValues(this, R.xml.settings, false);
 
+        // define num of columns based on device orientation
+        Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+        int numColumns = Config.HOME_LIST_NUM_COLUMNS;
+        numColumns = display.getRotation() == Surface.ROTATION_0 || display.getRotation() == Surface.ROTATION_180
+                ? numColumns
+                : (int) (numColumns * Config.HOME_LIST_COLUMNS_RATIO);
+
         // start layout and adapter
-        LinearLayoutManager layoutManager = new GridLayoutManager(this, Config.HOME_LIST_NUM_COLUMNS);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, numColumns);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.setHasFixedSize(true);
         mMoviesAdapter = new MoviesAdapter(this, this);
@@ -88,7 +101,6 @@ public class MainActivity
                 if (mPosition == RecyclerView.NO_POSITION){
                     mPosition = 0;
                 }
-                mRecyclerView.smoothScrollToPosition(mPosition);
                 if (movies != null && movies.length() != 0) {
                     showMoviesDataView();
 
@@ -222,6 +234,15 @@ public class MainActivity
     private void showMoviesDataView() {
         mLoadingIndicator.setVisibility(View.INVISIBLE);
         mRecyclerView.setVisibility(View.VISIBLE);
+
+        // scroll to the right position
+        // delays to wait for the elements to be on the screen
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mRecyclerView.smoothScrollToPosition(mPosition);
+            }}, 100);
     }
 
     /**
@@ -233,5 +254,27 @@ public class MainActivity
                 getResources().getString(R.string.pref_show_by_default));
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState){
+
+        int offset = Config.HOME_LIST_NUM_COLUMNS;
+        Display display = ((WindowManager) getSystemService(WINDOW_SERVICE)).getDefaultDisplay();
+        offset = display.getRotation() == Surface.ROTATION_90 || display.getRotation() == Surface.ROTATION_270
+                ? offset
+                : (int) ((offset + 1) * Config.HOME_LIST_COLUMNS_RATIO);
+
+        GridLayoutManager layoutManager = (GridLayoutManager) mRecyclerView.getLayoutManager();
+        outState.putInt(SAVED_SCROLL_POSITION, layoutManager.findFirstVisibleItemPosition() + offset);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            mPosition = savedInstanceState.getInt(SAVED_SCROLL_POSITION);
+        }
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }

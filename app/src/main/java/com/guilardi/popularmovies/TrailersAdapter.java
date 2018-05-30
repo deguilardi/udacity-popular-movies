@@ -55,6 +55,8 @@ public class TrailersAdapter extends RecyclerView.Adapter<TrailersAdapter.Traile
         Picasso.with(mContext).load(thumbURL.toString())
                 .fit()
                 .centerCrop()
+                .placeholder(R.drawable.progress_animation)
+                .error(R.drawable.image_not_found)
                 .into(adapterViewHolder.thumb);
     }
 
