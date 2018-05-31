@@ -2,6 +2,7 @@ package com.guilardi.popularmovies;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -141,6 +142,7 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void loadTrailersData(){
+        final Context context = this;
         Callback<Trailers> callback = new Callback<Trailers>(){
 
             @Override
@@ -161,7 +163,8 @@ public class DetailActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<Trailers> call, Throwable t) {
-                Toast.makeText(getParent(), "Something went wrong, please check your internet connection and try again!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.message_something_wrong_internet, Toast.LENGTH_LONG).show();
+                showTrailersErrorMessage();
             }
         };
         NetworkUtils.getInstance().loadTrailers(mMovie, callback);
@@ -169,6 +172,7 @@ public class DetailActivity extends AppCompatActivity
     }
 
     private void loadReviewsData(){
+        final Context context = this;
         Callback<Reviews> callback = new Callback<Reviews>(){
 
             @Override
@@ -189,7 +193,8 @@ public class DetailActivity extends AppCompatActivity
 
             @Override
             public void onFailure(Call<Reviews> call, Throwable t) {
-                Toast.makeText(getParent(), R.string.message_something_wrong_internet, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, R.string.message_something_wrong_internet, Toast.LENGTH_LONG).show();
+                showReviewsErrorMessage();
             }
         };
         NetworkUtils.getInstance().loadReviews(mMovie, callback);

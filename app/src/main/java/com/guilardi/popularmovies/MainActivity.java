@@ -117,7 +117,7 @@ public class MainActivity
 
             @Override
             public void onFailure(Call<Movies> call, Throwable t) {
-                Toast.makeText(getParent(), "Something went wrong, please check your internet connection and try again!", Toast.LENGTH_LONG).show();
+                Toast.makeText(context, "Something went wrong, please check your internet connection and try again!", Toast.LENGTH_LONG).show();
             }
         };
 
